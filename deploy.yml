@@ -1,0 +1,26 @@
+name: Build and Deploy Proxy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Docker
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build Docker image
+      run: |
+        docker build -t anonymous-proxy .
+
+    - name: Run Squid Proxy Container
+      run: |
+        docker run -d -p 3128:3128 --name squid-proxy anonymous-proxy
